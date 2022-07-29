@@ -8,19 +8,22 @@
     <script src="index.js" type="module"></script>
   </head>
   <body>
-    <header>
+    <header class="header">
       <form class="search-form" id="search-form">
         <input
+          class="search-form__input"
           type="text"
           name="searchQuery"
           autocomplete="off"
           placeholder="Search images..."
         />
-        <button type="submit">Search</button>
+        <button class="search-form__submit-button" type="submit">
+          &#128269;
+        </button>
       </form>
     </header>
     <main>
-      <div class="gallery"></div>
+      <div class="container"><div class="gallery"></div></div>
     </main>
   </body>
 </html>
