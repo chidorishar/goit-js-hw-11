@@ -4,7 +4,8 @@ li,
 span,
 h2,
 img,
-body {
+body,
+p {
   margin: 0;
   padding: 0;
 }
@@ -47,7 +48,6 @@ h2 {
 
 img {
   display: block;
-  width: 25px;
   height: auto;
   margin-right: 10px;
 }
@@ -55,6 +55,8 @@ img {
 /* VARS */
 :root {
   --header-height: 60px;
+  --common-indent: 15px;
+  --cards-per-row: 4;
 }
 
 /* STYLES */
@@ -68,7 +70,7 @@ body {
 }
 
 .header {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   display: flex;
@@ -99,5 +101,37 @@ body {
 }
 
 .gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: calc(-1 * var(--common-indent)) 0 0 calc(-1 * var(--common-indent));
   padding: 20px 0;
+}
+
+.photo-card {
+  flex-grow: 0;
+  min-width: 320px;
+  width: calc(100% / var(--cards-per-row) - var(--common-indent));
+  margin: var(--common-indent) 0 0 var(--common-indent);
+  overflow: hidden;
+
+  border: 1px solid #60606089;
+  border-radius: 10px;
+  box-shadow: 3px 5px 5px 0px #8383834d;
+}
+
+.info {
+  display: flex;
+  justify-content: space-around;
+}
+
+.info-item,
+.info-item-title {
+  display: block;
+  text-align: center;
+}
+
+.info-item {
+  width: max-content;
+  margin: 5px 0;
 }
