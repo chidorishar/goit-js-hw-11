@@ -7,7 +7,7 @@ export default class pixabayAPI {
   #searchOptions = {
     image_type: 'photo',
     orientation: 'horizontal',
-    safesearch: false,
+    safesearch: true,
     page: 1,
     per_page: 40,
   };
@@ -29,7 +29,9 @@ export default class pixabayAPI {
 
   async #fetchImages() {
     const response = await axios(
-      `${this.#URL}?key=${this.#API_KEY}&${this.#optionsToString()}`
+      `${this.#URL}?key=${this.#API_KEY}&q=${
+        this.#query
+      }&${this.#optionsToString()}`
     );
 
     if (response.status === 200) {
