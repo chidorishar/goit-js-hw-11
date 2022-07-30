@@ -49,7 +49,6 @@ h2 {
 img {
   display: block;
   height: auto;
-  margin-right: 10px;
 }
 
 /* VARS */
@@ -118,6 +117,17 @@ body {
   border: 1px solid #60606089;
   border-radius: 10px;
   box-shadow: 3px 5px 5px 0px #8383834d;
+}
+
+.photo-card-thumb {
+  display: block;
+  height: 320px;
+  overflow: hidden;
+}
+
+.photo-card-thumb-image {
+  width: 100%;
+  object-fit: cover;
 }
 
 .info {
