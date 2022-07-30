@@ -5,6 +5,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 // import { fetchCountries } from './fetchImages';
 
 import cardsTmpl from './markup/layouts/cardMarkup.hbs';
+import pixabayAPI from './fetchImagesAPI';
 
 const domEls = {
   // input: document.querySelector('#search-box'),
@@ -18,6 +19,7 @@ let gallery = {};
 
 //main function
 (() => {
+  const pixabayAPIInst = new pixabayAPI();
   // domEls.input.addEventListener('input', throttle(onInput, DEBOUNCE_DELAY));
   gallery = new SimpleLightbox('.gallery a', { uniqueImages: false });
   renderImages(testResponse);
