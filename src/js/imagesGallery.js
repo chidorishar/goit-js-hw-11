@@ -4,7 +4,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import PixabayAPI from './fetchImagesAPI';
-import GalleryRender from './galleryRender';
+import GalleryAPI from './galleryAPI';
 
 const domEls = {
   searchForm: document.querySelector('#search-form'),
@@ -12,18 +12,21 @@ const domEls = {
 
 //in ms
 const THROTTLE_TIMEOUT = 250;
+//in px
+const LOAD_MORE_IMAGES_OFFSET = 60;
 let isNewSearch = true;
 let galleryViewer = {};
 let pixabayAPIInst = {};
-let galleryRenderInst = {};
+let galleryAPIInst = {};
 
 //main function
 (() => {
   pixabayAPIInst = new PixabayAPI();
-  galleryRenderInst = new GalleryRender('#gallery-root');
+  galleryAPIInst = new GalleryAPI('#gallery-root');
   galleryViewer = new SimpleLightbox('.gallery a', { uniqueImages: false });
 
   domEls.searchForm.addEventListener('submit', onSearchFormSubmit);
+  window.addEventListener('scroll', throttle(onPageScroll, THROTTLE_TIMEOUT));
 })();
 
 function onSearchFormSubmit(event) {
@@ -32,7 +35,10 @@ function onSearchFormSubmit(event) {
   const query = event.target.searchQuery.value;
 
   isNewSearch = true;
-  pixabayAPIInst.loadImagesByQuery(query).then(onBackendRespond);
+  Notify.warning('Searching...');
+  pixabayAPIInst
+    .loadImagesByQuery(query)
+    .then(onBackendRespond)
 }
 
 function onBackendRespond({ hits: images, totalHits }) {
@@ -46,12 +52,18 @@ function onBackendRespond({ hits: images, totalHits }) {
     Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
-    galleryRenderInst.clearGallery();
+    galleryAPIInst.clearGallery();
 
     return;
   }
 
   appendImagesToGallery(images);
+  window.scrollBy({
+    top: galleryAPIInst.getCardHeight() * 2,
+    behavior: 'smooth',
+  });
+}
+
 function onPageScroll() {
   if (getDeltaToLastGalleryImage() < LOAD_MORE_IMAGES_OFFSET) {
     if (!pixabayAPIInst.canLoadMoreImages()) {
@@ -66,11 +78,18 @@ function onPageScroll() {
 }
 
 function renderImages(images) {
-  galleryRenderInst.render(images);
+  galleryAPIInst.render(images);
   galleryViewer.refresh();
 }
 
 function appendImagesToGallery(images) {
-  galleryRenderInst.appendImages(images);
+  galleryAPIInst.appendImages(images);
   galleryViewer.refresh();
+}
+
+function getDeltaToLastGalleryImage() {
+  return Math.abs(
+    window.innerHeight -
+      galleryAPIInst.getLastCardElement().getBoundingClientRect().bottom
+  );
 }

@@ -1,6 +1,6 @@
 import galleryCardsTmpl from './markup/layouts/cardMarkup.hbs';
 
-export default class GalleryRender {
+export default class GalleryAPI {
   #galleryRootDOMEl;
 
   /**
@@ -29,5 +29,16 @@ export default class GalleryRender {
 
   clearGallery() {
     this.#galleryRootDOMEl.innerHTML = '';
+  }
+
+  getLastCardElement() {
+    return this.#galleryRootDOMEl.lastElementChild;
+  }
+
+  getCardHeight() {
+    const { height } =
+      this.#galleryRootDOMEl.firstElementChild.getBoundingClientRect();
+
+    return height;
   }
 }
