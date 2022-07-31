@@ -17,7 +17,6 @@ export default class PixabayAPI {
   constructor() {}
 
   canLoadMoreImages() {
-    console.log(this.#totalHits, this.#loadedNumber);
     return Boolean(this.#totalHits - this.#loadedNumber);
   }
 
