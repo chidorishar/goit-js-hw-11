@@ -52,6 +52,17 @@ function onBackendRespond({ hits: images, totalHits }) {
   }
 
   appendImagesToGallery(images);
+function onPageScroll() {
+  if (getDeltaToLastGalleryImage() < LOAD_MORE_IMAGES_OFFSET) {
+    if (!pixabayAPIInst.canLoadMoreImages()) {
+      Notify.failure("That's all, folks!");
+
+      return;
+    }
+
+    Notify.warning('Loading more images...');
+    pixabayAPIInst.loadMoreImages().then(onBackendRespond);
+  }
 }
 
 function renderImages(images) {

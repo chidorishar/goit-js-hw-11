@@ -11,20 +11,35 @@ export default class PixabayAPI {
     page: 1,
     per_page: 40,
   };
+  #totalHits = 0;
+  #loadedNumber = 0;
 
   constructor() {}
 
+  canLoadMoreImages() {
+    console.log(this.#totalHits, this.#loadedNumber);
+    return Boolean(this.#totalHits - this.#loadedNumber);
+  }
+
   async loadImagesByQuery(searchQuery) {
     this.#searchOptions.page = 1;
+    this.#loadedNumber = 0;
     this.#query = searchQuery;
 
-    return await this.#fetchImages();
+    const response = await this.#fetchImages();
+    this.#totalHits = response.totalHits;
+    this.#loadedNumber += response.hits.length;
+
+    return response;
   }
 
   async loadMoreImages() {
     this.#searchOptions.page++;
 
-    return await this.#fetchImages();
+    const response = await this.#fetchImages();
+    this.#loadedNumber += response.hits.length;
+
+    return response;
   }
 
   async #fetchImages() {
