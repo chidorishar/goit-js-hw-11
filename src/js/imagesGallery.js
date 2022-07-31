@@ -35,7 +35,7 @@ function onSearchFormSubmit(event) {
   const query = event.target.searchQuery.value;
 
   isNewSearch = true;
-  Notify.warning('Searching...');
+  Notify.info('Searching...');
   pixabayAPIInst
     .loadImagesByQuery(query)
     .then(onBackendSuccessRespond)
@@ -68,12 +68,12 @@ function onBackendSuccessRespond({ hits: images, totalHits }) {
 function onPageScroll() {
   if (getDeltaToLastGalleryImage() < LOAD_MORE_IMAGES_OFFSET) {
     if (!pixabayAPIInst.canLoadMoreImages()) {
-      Notify.failure("That's all, folks!");
+      Notify.warning("That's all, folks!");
 
       return;
     }
 
-    Notify.warning('Loading more images...');
+    Notify.info('Loading more images...');
     pixabayAPIInst.loadMoreImages().then(onBackendSuccessRespond);
   }
 }
