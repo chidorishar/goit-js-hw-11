@@ -3,32 +3,37 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-import cardsTmpl from './markup/layouts/cardMarkup.hbs';
-import pixabayAPI from './fetchImagesAPI';
 import PixabayAPI from './fetchImagesAPI';
+import GalleryRender from './galleryRender';
 
 const domEls = {
   searchForm: document.querySelector('#search-form'),
-  gallery: document.querySelector('#images-wrapper'),
 };
 
 //in ms
 const THROTTLE_TIMEOUT = 250;
-let gallery = {};
+let isNewSearch = true;
+let galleryViewer = {};
 let pixabayAPIInst = {};
+let galleryRenderInst = {};
 
 //main function
 (() => {
-  pixabayAPIInst = new pixabayAPI();
-  gallery = new SimpleLightbox('.gallery a', { uniqueImages: false });
   pixabayAPIInst = new PixabayAPI();
+  galleryRenderInst = new GalleryRender('#gallery-root');
+  galleryViewer = new SimpleLightbox('.gallery a', { uniqueImages: false });
 
   domEls.searchForm.addEventListener('submit', onSearchFormSubmit);
 })();
 
-function renderImages({ hits: images }) {
-  domEls.gallery.innerHTML = cardsTmpl({ images });
-  gallery.refresh();
+function renderImages(images) {
+  galleryRenderInst.render(images);
+  galleryViewer.refresh();
+}
+
+function appendImagesToGallery(images) {
+  galleryRenderInst.appendImages(images);
+  galleryViewer.refresh();
 }
 
 function onSearchFormSubmit(event) {
@@ -36,5 +41,25 @@ function onSearchFormSubmit(event) {
 
   const query = event.target.searchQuery.value;
 
-  pixabayAPIInst.loadImagesByQuery(query).then(renderImages);
+  isNewSearch = true;
+  pixabayAPIInst.loadImagesByQuery(query).then(onBackendRespond);
+}
+
+function onBackendRespond({ hits: images, totalHits }) {
+  if (totalHits && isNewSearch) {
+    Notify.success(`Hooray! We found ${totalHits} images.`);
+    renderImages(images);
+    isNewSearch = false;
+
+    return;
+  } else if (!totalHits) {
+    Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+    galleryRenderInst.clearGallery();
+
+    return;
+  }
+
+  appendImagesToGallery(images);
 }
