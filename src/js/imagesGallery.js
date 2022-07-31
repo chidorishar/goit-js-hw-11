@@ -26,16 +26,6 @@ let galleryRenderInst = {};
   domEls.searchForm.addEventListener('submit', onSearchFormSubmit);
 })();
 
-function renderImages(images) {
-  galleryRenderInst.render(images);
-  galleryViewer.refresh();
-}
-
-function appendImagesToGallery(images) {
-  galleryRenderInst.appendImages(images);
-  galleryViewer.refresh();
-}
-
 function onSearchFormSubmit(event) {
   event.preventDefault();
 
@@ -62,4 +52,14 @@ function onBackendRespond({ hits: images, totalHits }) {
   }
 
   appendImagesToGallery(images);
+}
+
+function renderImages(images) {
+  galleryRenderInst.render(images);
+  galleryViewer.refresh();
+}
+
+function appendImagesToGallery(images) {
+  galleryRenderInst.appendImages(images);
+  galleryViewer.refresh();
 }
