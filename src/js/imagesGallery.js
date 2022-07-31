@@ -39,6 +39,7 @@ function onSearchFormSubmit(event) {
   pixabayAPIInst
     .loadImagesByQuery(query)
     .then(onBackendRespond)
+    .catch(() => Notify.failure('Error!'));
 }
 
 function onBackendRespond({ hits: images, totalHits }) {
