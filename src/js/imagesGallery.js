@@ -38,11 +38,11 @@ function onSearchFormSubmit(event) {
   Notify.warning('Searching...');
   pixabayAPIInst
     .loadImagesByQuery(query)
-    .then(onBackendRespond)
+    .then(onBackendSuccessRespond)
     .catch(() => Notify.failure('Error!'));
 }
 
-function onBackendRespond({ hits: images, totalHits }) {
+function onBackendSuccessRespond({ hits: images, totalHits }) {
   if (totalHits && isNewSearch) {
     Notify.success(`Hooray! We found ${totalHits} images.`);
     renderImages(images);
@@ -74,7 +74,7 @@ function onPageScroll() {
     }
 
     Notify.warning('Loading more images...');
-    pixabayAPIInst.loadMoreImages().then(onBackendRespond);
+    pixabayAPIInst.loadMoreImages().then(onBackendSuccessRespond);
   }
 }
 
