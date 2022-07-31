@@ -1,10 +1,11 @@
-var throttle = require('lodash.throttle');
+let throttle = require('lodash.throttle');
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import cardsTmpl from './markup/layouts/cardMarkup.hbs';
 import pixabayAPI from './fetchImagesAPI';
+import PixabayAPI from './fetchImagesAPI';
 
 const domEls = {
   searchForm: document.querySelector('#search-form'),
@@ -20,6 +21,7 @@ let pixabayAPIInst = {};
 (() => {
   pixabayAPIInst = new pixabayAPI();
   gallery = new SimpleLightbox('.gallery a', { uniqueImages: false });
+  pixabayAPIInst = new PixabayAPI();
 
   domEls.searchForm.addEventListener('submit', onSearchFormSubmit);
 })();
