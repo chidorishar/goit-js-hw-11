@@ -56,6 +56,7 @@ function onBackendSuccessRespond({ hits: images, totalHits }) {
 
   if (totalHits && isNewSearch) {
     Notify.success(`Hooray! We found ${totalHits} images.`);
+    window.scrollTo({ top: 0 });
     renderImages(images);
     intersectObserver.observe(galleryAPIInst.getLastCardElement());
     isNewSearch = false;
@@ -102,5 +103,4 @@ function makeRequestToPixabay(apiRequestFunction, arg = null) {
   apiRequestFunction(arg)
     .then(onBackendSuccessRespond)
     .catch(() => Notify.failure('Error!'));
-  console.log('load more!!!!');
 }
