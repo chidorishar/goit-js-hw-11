@@ -54,21 +54,18 @@ function onBackendSuccessRespond({ hits: images, totalHits }) {
     return;
   }
 
-  if (totalHits && isNewSearch) {
+  if (isNewSearch) {
     Notify.success(`Hooray! We found ${totalHits} images.`);
     window.scrollTo({ top: 0 });
     renderImages(images);
-    intersectObserver.observe(galleryAPIInst.getLastCardElement());
     isNewSearch = false;
-
-    return;
+  } else {
+    appendImagesToGallery(images);
+    window.scrollBy({
+      top: galleryAPIInst.getCardHeight() * 2,
+      behavior: 'smooth',
+    });
   }
-
-  appendImagesToGallery(images);
-  window.scrollBy({
-    top: galleryAPIInst.getCardHeight() * 2,
-    behavior: 'smooth',
-  });
   intersectObserver.observe(galleryAPIInst.getLastCardElement());
 }
 
