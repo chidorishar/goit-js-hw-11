@@ -1,4 +1,3 @@
-let throttle = require('lodash.throttle');
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -18,6 +17,7 @@ let isNewSearch = true;
 let galleryViewer = {};
 let pixabayAPIInst = {};
 let galleryAPIInst = {};
+let intersectObserver = {};
 
 //main function
 (() => {
@@ -26,7 +26,9 @@ let galleryAPIInst = {};
   galleryViewer = new SimpleLightbox('.gallery a', { uniqueImages: false });
 
   domEls.searchForm.addEventListener('submit', onSearchFormSubmit);
-  window.addEventListener('scroll', throttle(onPageScroll, THROTTLE_TIMEOUT));
+  intersectObserver = new IntersectionObserver(onLastImageIsSeen, {
+    threshold: 0.2,
+  });
 })();
 
 function onSearchFormSubmit(event) {
@@ -55,28 +57,18 @@ function onBackendSuccessRespond({ hits: images, totalHits }) {
   if (totalHits && isNewSearch) {
     Notify.success(`Hooray! We found ${totalHits} images.`);
     renderImages(images);
+    intersectObserver.observe(galleryAPIInst.getLastCardElement());
     isNewSearch = false;
 
     return;
   }
+
   appendImagesToGallery(images);
   window.scrollBy({
     top: galleryAPIInst.getCardHeight() * 2,
     behavior: 'smooth',
   });
-}
-
-function onPageScroll() {
-  if (getDeltaToLastGalleryImage() < LOAD_MORE_IMAGES_OFFSET) {
-    if (!pixabayAPIInst.canLoadMoreImages()) {
-      Notify.warning("That's all, folks!");
-
-      return;
-    }
-
-    Notify.info('Loading more images...');
-    pixabayAPIInst.loadMoreImages().then(onBackendSuccessRespond);
-  }
+  intersectObserver.observe(galleryAPIInst.getLastCardElement());
 }
 
 function renderImages(images) {
@@ -89,9 +81,22 @@ function appendImagesToGallery(images) {
   galleryViewer.refresh();
 }
 
-function getDeltaToLastGalleryImage() {
-  return Math.abs(
-    window.innerHeight -
-      galleryAPIInst.getLastCardElement().getBoundingClientRect().bottom
-  );
+function onLastImageIsSeen(entries) {
+  const { isIntersecting } = entries[0];
+
+  if (isIntersecting) {
+    intersectObserver.disconnect();
+
+    if (!pixabayAPIInst.canLoadMoreImages()) {
+      Notify.warning("That's all, folks!");
+
+      return;
+    }
+
+    Notify.info('Loading more images...');
+    pixabayAPIInst
+      .loadMoreImages()
+      .then(onBackendSuccessRespond)
+      .catch(() => Notify.failure('Error!'));
+  }
 }
