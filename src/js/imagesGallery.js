@@ -43,13 +43,7 @@ function onSearchFormSubmit(event) {
 }
 
 function onBackendSuccessRespond({ hits: images, totalHits }) {
-  if (totalHits && isNewSearch) {
-    Notify.success(`Hooray! We found ${totalHits} images.`);
-    renderImages(images);
-    isNewSearch = false;
-
-    return;
-  } else if (!totalHits) {
+  if (!totalHits) {
     Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -58,6 +52,13 @@ function onBackendSuccessRespond({ hits: images, totalHits }) {
     return;
   }
 
+  if (totalHits && isNewSearch) {
+    Notify.success(`Hooray! We found ${totalHits} images.`);
+    renderImages(images);
+    isNewSearch = false;
+
+    return;
+  }
   appendImagesToGallery(images);
   window.scrollBy({
     top: galleryAPIInst.getCardHeight() * 2,
