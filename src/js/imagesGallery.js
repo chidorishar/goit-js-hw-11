@@ -38,10 +38,10 @@ function onSearchFormSubmit(event) {
 
   isNewSearch = true;
   Notify.info('Searching...');
-  pixabayAPIInst
-    .loadImagesByQuery(query)
-    .then(onBackendSuccessRespond)
-    .catch(() => Notify.failure('Error!'));
+  makeRequestToPixabay(
+    pixabayAPIInst.loadImagesByQuery.bind(pixabayAPIInst),
+    query
+  );
 }
 
 function onBackendSuccessRespond({ hits: images, totalHits }) {
@@ -94,9 +94,13 @@ function onLastImageIsSeen(entries) {
     }
 
     Notify.info('Loading more images...');
-    pixabayAPIInst
-      .loadMoreImages()
-      .then(onBackendSuccessRespond)
-      .catch(() => Notify.failure('Error!'));
+    makeRequestToPixabay(pixabayAPIInst.loadMoreImages.bind(pixabayAPIInst));
   }
+}
+
+function makeRequestToPixabay(apiRequestFunction, arg = null) {
+  apiRequestFunction(arg)
+    .then(onBackendSuccessRespond)
+    .catch(() => Notify.failure('Error!'));
+  console.log('load more!!!!');
 }
