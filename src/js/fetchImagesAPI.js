@@ -17,7 +17,7 @@ export default class PixabayAPI {
   constructor() {}
 
   canLoadMoreImages() {
-    return Boolean(this.#totalHits - this.#loadedNumber);
+    return this.#totalHits !== this.#loadedNumber;
   }
 
   async loadImagesByQuery(searchQuery) {
